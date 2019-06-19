@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">MyLauncher</string>
+    <string name="app_image">app_image</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_drawer">App Drawer</string>
+</resources>
