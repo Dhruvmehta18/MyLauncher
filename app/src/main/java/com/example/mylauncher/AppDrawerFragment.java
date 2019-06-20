@@ -7,12 +7,13 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+
+import com.example.mylauncher.utils.RecyclerViewEmptySupport;
 
 /**
  * A fragment representing a list of Apps.
@@ -23,7 +24,7 @@ public class AppDrawerFragment extends Fragment implements SearchView.OnQueryTex
     private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = 5;
     AppAdapter appAdapter;
-    RecyclerView recyclerView;
+    RecyclerViewEmptySupport recyclerView;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -56,15 +57,16 @@ public class AppDrawerFragment extends Fragment implements SearchView.OnQueryTex
         // Set the adapter
         SearchView searchView = view.findViewById(R.id.search);
         recyclerView = view.findViewById(R.id.recycler_app_list);
-            mColumnCount = Utility.calculateNoOfColumns(getContext(), 80);
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), mColumnCount));
-            }
+        mColumnCount = Utility.calculateNoOfColumns(getContext(), 80);
+        if (mColumnCount <= 1) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        } else {
+            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), mColumnCount));
+        }
             recyclerView.setItemAnimator(new DefaultItemAnimator());
         appAdapter = new AppAdapter(this.getContext());
         recyclerView.setAdapter(appAdapter);
+        recyclerView.setEmptyView(view.findViewById(R.id.list_empty));
         searchView.setOnQueryTextListener(this);
         appAdapter.notifyDataSetChanged();
         return view;
