@@ -12,14 +12,13 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class BottomAppAdapter extends ArrayAdapter {
+public class BottomAppAdapter extends ArrayAdapter<AppInfo> {
     private List<AppInfo> appsList;
 
     BottomAppAdapter(@NonNull Context context, int resource, @NonNull List<AppInfo> objects) {
         super(context, resource, objects);
         appsList = objects;
     }
-
 
     @Override
     public int getCount() {
@@ -28,7 +27,7 @@ public class BottomAppAdapter extends ArrayAdapter {
 
     @NonNull
     @Override
-    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+    public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
         View v = convertView;
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         v = inflater.inflate(R.layout.fragment_item, null);
@@ -42,4 +41,5 @@ public class BottomAppAdapter extends ArrayAdapter {
         imageView.setImageDrawable(appIcon);
         return v;
     }
+
 }

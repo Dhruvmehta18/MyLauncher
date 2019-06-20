@@ -9,11 +9,10 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 public class MainActivity extends AppCompatActivity {
-    private RecyclerView recyclerView;
-    private AppAdapter mAdapter;
+    ScreenFragment screenFragment;
 
     public static Drawable getActivityIcon(Context context, String packageName, String activityName) {
         PackageManager pm = context.getPackageManager();
@@ -28,11 +27,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ScreenFragment screenFragment = new ScreenFragment();
+        screenFragment = new ScreenFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .add(R.id.main, screenFragment)
                 .commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Log.d("onback", String.valueOf(screenFragment.isOnBackPressedAvailable()));
+        if (screenFragment.isOnBackPressedAvailable()) {
+            screenFragment.onBackPressed();
+        } else {
+            super.onBackPressed();
+        }
     }
 }
 

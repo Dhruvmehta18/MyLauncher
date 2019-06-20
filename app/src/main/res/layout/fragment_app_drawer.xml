@@ -1,12 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/list"
-    android:name="com.example.mylauncher.AppDrawerFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="16dp"
-    app:layoutManager="android.support.v7.widget.GridLayoutManager"
-    tools:context=".MainActivity"
-    tools:listitem="@layout/fragment_item" />
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        style="@style/HeaderBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_gravity="start"
+        android:layout_margin="0dp"
+        android:padding="0dp"
+        android:theme="@style/Themelight">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="start">
+
+            <SearchView
+                android:id="@+id/search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:iconifiedByDefault="false"
+                android:queryHint="Search Apps"
+                tools:targetApi="lollipop">
+
+                <requestFocus />
+            </SearchView>
+
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_app_list"
+            android:name="com.example.mylauncher.AppDrawerFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="16dp"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            app:layoutManager="android.support.v7.widget.GridLayoutManager"
+            tools:context=".MainActivity"
+            tools:listitem="@layout/fragment_item" />
+    </FrameLayout>
+</LinearLayout>

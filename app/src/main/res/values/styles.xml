@@ -11,4 +11,13 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
+    <style name="HeaderBar">
+        <item name="color">#000</item>
+    </style>
+
+    <style name="Themelight" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:editTextColor">#fff</item>
+        <item name="android:textColorHint">@android:color/white</item>
+    </style>
 </resources>

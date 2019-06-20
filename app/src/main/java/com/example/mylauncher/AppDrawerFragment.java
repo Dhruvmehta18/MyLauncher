@@ -8,32 +8,22 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link AppDrawerFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link AppDrawerFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-
+import android.widget.SearchView;
 
 /**
- * A fragment representing a list of Items.
+ * A fragment representing a list of Apps.
  * <p/>
  */
-public class AppDrawerFragment extends Fragment {
+public class AppDrawerFragment extends Fragment implements SearchView.OnQueryTextListener {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 5;
-
+    AppAdapter appAdapter;
+    RecyclerView recyclerView;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -41,8 +31,6 @@ public class AppDrawerFragment extends Fragment {
     public AppDrawerFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public static AppDrawerFragment newInstance(int columnCount) {
         AppDrawerFragment fragment = new AppDrawerFragment();
         Bundle args = new Bundle();
@@ -66,8 +54,8 @@ public class AppDrawerFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_app_drawer, container, false);
 
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            RecyclerView recyclerView = (RecyclerView) view;
+        SearchView searchView = view.findViewById(R.id.search);
+        recyclerView = view.findViewById(R.id.recycler_app_list);
             mColumnCount = Utility.calculateNoOfColumns(getContext(), 80);
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -75,8 +63,10 @@ public class AppDrawerFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), mColumnCount));
             }
             recyclerView.setItemAnimator(new DefaultItemAnimator());
-            recyclerView.setAdapter(new AppAdapter(this.getContext()));
-        }
+        appAdapter = new AppAdapter(this.getContext());
+        recyclerView.setAdapter(appAdapter);
+        searchView.setOnQueryTextListener(this);
+        appAdapter.notifyDataSetChanged();
         return view;
     }
 
@@ -91,4 +81,18 @@ public class AppDrawerFragment extends Fragment {
         super.onDetach();
     }
 
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+
+        appAdapter.getFilter().filter(query);
+
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        Log.d("newText", newText);
+        appAdapter.getFilter().filter(newText);
+        return true;
+    }
 }
