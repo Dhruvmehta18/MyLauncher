@@ -1,6 +1,7 @@
 package com.example.mylauncher;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -22,9 +23,10 @@ import com.example.mylauncher.utils.RecyclerViewEmptySupport;
 public class AppDrawerFragment extends Fragment implements SearchView.OnQueryTextListener {
 
     private static final String ARG_COLUMN_COUNT = "column-count";
-    private int mColumnCount = 5;
+    static Bitmap bitmap;
     AppAdapter appAdapter;
     RecyclerViewEmptySupport recyclerView;
+    private int mColumnCount;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -32,11 +34,12 @@ public class AppDrawerFragment extends Fragment implements SearchView.OnQueryTex
     public AppDrawerFragment() {
     }
 
-    public static AppDrawerFragment newInstance(int columnCount) {
+    public static AppDrawerFragment newInstance(Bitmap bitmap1) {
         AppDrawerFragment fragment = new AppDrawerFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
+//        Bundle args = new Bundle();
+//        args.putInt(ARG_COLUMN_COUNT, columnCount);
+//        fragment.setArguments(args);
+        bitmap = bitmap1;
         return fragment;
     }
 
@@ -44,9 +47,9 @@ public class AppDrawerFragment extends Fragment implements SearchView.OnQueryTex
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
+//        if (getArguments() != null) {
+//            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+//        }
     }
 
     @Override
@@ -55,6 +58,7 @@ public class AppDrawerFragment extends Fragment implements SearchView.OnQueryTex
         View view = inflater.inflate(R.layout.fragment_app_drawer, container, false);
 
         // Set the adapter
+        view.setBackground(MainActivity.getBlurWallpaper());
         SearchView searchView = view.findViewById(R.id.search);
         recyclerView = view.findViewById(R.id.recycler_app_list);
         mColumnCount = Utility.calculateNoOfColumns(getContext(), 80);
@@ -63,7 +67,7 @@ public class AppDrawerFragment extends Fragment implements SearchView.OnQueryTex
         } else {
             recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), mColumnCount));
         }
-            recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
         appAdapter = new AppAdapter(this.getContext());
         recyclerView.setAdapter(appAdapter);
         recyclerView.setEmptyView(view.findViewById(R.id.list_empty));
@@ -97,4 +101,5 @@ public class AppDrawerFragment extends Fragment implements SearchView.OnQueryTex
         appAdapter.getFilter().filter(newText);
         return true;
     }
+
 }

@@ -32,7 +32,6 @@ public class HomeScreen extends Fragment implements View.OnClickListener {
     ViewPager viewPager;
     GridView gridView;
     View view1;
-
     public HomeScreen() {
         // Required empty public constructor
     }
@@ -55,22 +54,7 @@ public class HomeScreen extends Fragment implements View.OnClickListener {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
-        //        ImageView Icon = v.findViewById(R.id.icon);
-//        Icon.setImageDrawable(MainActivity.getActivityIcon(this.getContext(), "com.android.chrome", "com.google.android.apps.chrome.Main"));
-//        Icon.setOnClickListener(this);
-        return inflater.inflate(R.layout.fragment_home_screen, container, false);
-    }
-
-
-    @Override
-    public void onClick(View v) {
-
-    }
-
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_home_screen, container, false);
         List<AppInfo> appsList;
         PackageManager pm = this.getContext().getPackageManager();
         appsList = new ArrayList<>();
@@ -98,6 +82,27 @@ public class HomeScreen extends Fragment implements View.OnClickListener {
         gridView = view.findViewById(R.id.grid_home_panel);
         gridView.setNumColumns(5);
         gridView.setAdapter(bottomAppAdapter);
+        return view;
+    }
+
+
+    @Override
+    public void onClick(View v) {
+
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         view1 = view.findViewById(R.id.homescreen_active);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -112,10 +117,9 @@ public class HomeScreen extends Fragment implements View.OnClickListener {
                         drawerFragment = new AppDrawerFragment();
                         fragmentManager.beginTransaction()
                                 .add(R.id.home_screen_layout, drawerFragment)
-                                .addToBackStack("jjj")
                                 .commit();
-
                         view1.setVisibility(View.GONE);
+
                     } else {
                         Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(appInfo.packageName.toString());
                         context.startActivity(launchIntent);

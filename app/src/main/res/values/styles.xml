@@ -15,9 +15,14 @@
     <style name="HeaderBar">
         <item name="color">#000</item>
     </style>
-
     <style name="Themelight" parent="ThemeOverlay.AppCompat.Light">
         <item name="android:editTextColor">#fff</item>
         <item name="android:textColorHint">@android:color/white</item>
+    </style>
+
+    <style name="NoPermissionTheme">
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textColor">@android:color/holo_blue_light</item>
+        <item name="android:radius">30dp</item>
     </style>
 </resources>

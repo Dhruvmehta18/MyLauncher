@@ -6,5 +6,35 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <LinearLayout
+        android:id="@+id/no_permission_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:radius="30dp">
 
+        <TextView
+            android:id="@+id/permission_description_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:lines="2"
+            android:text="@string/permission_description"
+            android:textColor="#555"
+            android:textSize="22sp" />
+
+        <Button
+            android:id="@+id/give_permission_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:onClick="grandPermissionButtonClick"
+            android:text="@string/give_permission"
+            android:textAllCaps="false"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="18sp" />
+    </LinearLayout>
 </FrameLayout>

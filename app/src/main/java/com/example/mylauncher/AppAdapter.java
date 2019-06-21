@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder> implements Filterable {
-    public MyFilter mFilter;
     private SortedList<AppInfo> appsList;
     private List<AppInfo> mappList;
 
@@ -128,8 +127,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder> impl
     public Filter getFilter() {
         mappList.clear();
         addAll(appsList);
-        mFilter = new AppAdapter.MyFilter(this, mappList);
-        return mFilter;
+        return new MyFilter(this, mappList);
     }
 
     private void addAll(SortedList sortedList) {
