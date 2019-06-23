@@ -1,18 +1,24 @@
 package com.example.mylauncher;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.SearchView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mylauncher.utils.RecyclerViewEmptySupport;
 
@@ -27,6 +33,8 @@ public class AppDrawerFragment extends Fragment implements SearchView.OnQueryTex
     AppAdapter appAdapter;
     RecyclerViewEmptySupport recyclerView;
     private int mColumnCount;
+    private String queryText = "";
+    private String search = "";
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -53,6 +61,24 @@ public class AppDrawerFragment extends Fragment implements SearchView.OnQueryTex
     }
 
     @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        if (!queryText.isEmpty()) {
+            View view1 = view.findViewById(R.id.search_play_store);
+            view1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    search = "http://play.google.com/store/search?q=" + queryText + "&c=apps";
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(search));
+                    intent.setPackage("com.android.vending");
+                    startActivity(intent);
+                }
+            });
+
+        }
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_app_drawer, container, false);
@@ -72,7 +98,6 @@ public class AppDrawerFragment extends Fragment implements SearchView.OnQueryTex
         recyclerView.setAdapter(appAdapter);
         recyclerView.setEmptyView(view.findViewById(R.id.list_empty));
         searchView.setOnQueryTextListener(this);
-        appAdapter.notifyDataSetChanged();
         return view;
     }
 
@@ -95,10 +120,19 @@ public class AppDrawerFragment extends Fragment implements SearchView.OnQueryTex
         return false;
     }
 
+    private void runLayoutAnimation(RecyclerView recyclerView) {
+        final Context context = recyclerView.getContext();
+        final LayoutAnimationController controller =
+                AnimationUtils.loadLayoutAnimation(context, R.anim.grid_layout_animation_from_bottom);
+
+        recyclerView.setLayoutAnimation(controller);
+        recyclerView.scheduleLayoutAnimation();
+    }
     @Override
     public boolean onQueryTextChange(String newText) {
-        Log.d("newText", newText);
         appAdapter.getFilter().filter(newText);
+        runLayoutAnimation(recyclerView);
+        queryText = newText;
         return true;
     }
 

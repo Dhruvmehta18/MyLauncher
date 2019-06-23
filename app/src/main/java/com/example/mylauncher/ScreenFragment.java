@@ -2,15 +2,16 @@ package com.example.mylauncher;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 
 /**
@@ -56,7 +57,7 @@ public class ScreenFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_screen, container, false);
@@ -76,7 +77,7 @@ public class ScreenFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 //        if (context instanceof OnFragmentInteractionListener) {
 //            mListener = (OnFragmentInteractionListener) context;
@@ -98,20 +99,21 @@ public class ScreenFragment extends Fragment {
 //    }
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        screenCollectionAdpater = new ScreenCollectionAdapter(getChildFragmentManager());
+        screenCollectionAdpater = new ScreenCollectionAdapter(getChildFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         viewPager = view.findViewById(R.id.screen_pager);
         viewPager.setAdapter(screenCollectionAdpater);
-
     }
 
 
     public class ScreenCollectionAdapter extends FragmentStatePagerAdapter {
-        int maxscreens = 2;
+        int maxscreens = 1;
 
-        ScreenCollectionAdapter(FragmentManager fm) {
-            super(fm);
+        ScreenCollectionAdapter(@NonNull FragmentManager fm, int behavior) {
+            super(fm, behavior);
         }
 
+
+        @NonNull
         @Override
         public Fragment getItem(int i) {
             if (i == 0) {

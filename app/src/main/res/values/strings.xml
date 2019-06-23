@@ -8,4 +8,6 @@
     <string name="no_app">No such app found</string>
     <string name="permission_description">The app requires some permission\n to serve you best service</string>
     <string name="give_permission">Click to give required permission</string>
+    <string name="find_on_playStore">Search an app on Play Store</string>
+    <string name="play_store_icon">Play Store icon</string>
 </resources>

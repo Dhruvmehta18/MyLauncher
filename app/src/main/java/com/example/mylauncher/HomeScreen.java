@@ -1,22 +1,28 @@
 package com.example.mylauncher;
 
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,29 +31,58 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeScreen extends Fragment implements View.OnClickListener {
+public class HomeScreen extends Fragment {
     AppDrawerFragment drawerFragment;
-    HomeScreenPageAdapter homeScreenPageAdapter;
-    BottomAppAdapter bottomAppAdapter;
-    ViewPager viewPager;
-    GridView gridView;
-    View view1;
+    private HomeScreenPageAdapter homeScreenPageAdapter;
+    private BottomAppAdapter bottomAppAdapter;
+    private ViewPager viewPager;
+    private GridView gridView;
+    private View view1;
+    private BottomSheetBehavior bottomSheetBehavior;
+    private View contentView;
+    private View loadingView;
+    private int shortAnimationDuration;
+    private GestureListener detector;
     public HomeScreen() {
         // Required empty public constructor
     }
 
     public boolean isOnBackPressedAvailable() {
-        return view1.getVisibility() == View.GONE;
+        return bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED;
     }
 
     public void onBackPressed() {
         if (isOnBackPressedAvailable()) {
-            FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction()
-                    .remove(drawerFragment)
-                    .commit();
-            view1.setVisibility(View.VISIBLE);
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         }
+    }
+
+    private void crossfade() {
+
+        // Set the content view to 0% opacity but visible, so that it is visible
+        // (but fully transparent) during the animation.
+        contentView.setAlpha(0f);
+        contentView.setVisibility(View.VISIBLE);
+
+        // Animate the content view to 100% opacity, and clear any animation
+        // listener set on the view.
+        contentView.animate()
+                .alpha(1f)
+                .setDuration(shortAnimationDuration)
+                .setListener(null);
+
+        // Animate the loading view to 0% opacity. After the animation ends,
+        // set its visibility to GONE as an optimization step (it won't
+        // participate in layout passes, etc.)
+        loadingView.animate()
+                .alpha(0f)
+                .setDuration(shortAnimationDuration)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        loadingView.setVisibility(View.GONE);
+                    }
+                });
     }
 
     @Override
@@ -71,10 +106,11 @@ public class HomeScreen extends Fragment implements View.OnClickListener {
             app.icon = ri.activityInfo.loadIcon(pm);
             appsList.add(app);
         }
+
         appsList = appsList.subList(0, 5);
-        AppInfo info = new AppInfo("App Drawer", "app_drawer", getResources().getDrawable(R.drawable.ic_apps_black_24dp));
-        appsList.remove(2);
-        appsList.add(2, info);
+//        AppInfo info = new AppInfo("App Drawer", "app_drawer", getResources().getDrawable(R.drawable.ic_apps_black_24dp));
+//        appsList.remove(2);
+//        appsList.add(2, info);
         homeScreenPageAdapter = new HomeScreenPageAdapter(getChildFragmentManager());
         viewPager = view.findViewById(R.id.home_screen_pager);
         viewPager.setAdapter(homeScreenPageAdapter);
@@ -82,17 +118,54 @@ public class HomeScreen extends Fragment implements View.OnClickListener {
         gridView = view.findViewById(R.id.grid_home_panel);
         gridView.setNumColumns(5);
         gridView.setAdapter(bottomAppAdapter);
+        contentView = view.findViewById(R.id.bottom_home_panel);
+        loadingView = view.findViewById(R.id.app_drawer_fragment);
+
+        // Initially hide the content view.
+        loadingView.setVisibility(View.GONE);
+        view1 = view.findViewById(R.id.homescreen_active);
+        // Retrieve and cache the system's default "short" animation time.
+        shortAnimationDuration = getResources().getInteger(
+                android.R.integer.config_shortAnimTime);
+        bottomSheetBehavior = BottomSheetBehavior.from(view.findViewById(R.id.bottom_sheet));
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                switch (newState) {
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+                        contentView.setVisibility(View.VISIBLE);
+                        loadingView.setVisibility(View.GONE);
+                        break;
+                    case BottomSheetBehavior.STATE_DRAGGING:
+                        contentView.setVisibility(View.VISIBLE);
+                        loadingView.setVisibility(View.VISIBLE);
+                        break;
+                    case BottomSheetBehavior.STATE_EXPANDED:
+                        contentView.setVisibility(View.GONE);
+                        loadingView.setVisibility(View.VISIBLE);
+                        break;
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        break;
+                    case BottomSheetBehavior.STATE_HALF_EXPANDED:
+                        break;
+                    case BottomSheetBehavior.STATE_SETTLING:
+                        contentView.setVisibility(View.VISIBLE);
+                        loadingView.setVisibility(View.VISIBLE);
+                        break;
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                contentView.setAlpha(1 - slideOffset);
+                loadingView.setAlpha(slideOffset);
+            }
+        });
         return view;
     }
 
-
     @Override
-    public void onClick(View v) {
-
-    }
-
-    @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
     }
 
@@ -103,7 +176,44 @@ public class HomeScreen extends Fragment implements View.OnClickListener {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        view1 = view.findViewById(R.id.homescreen_active);
+        view1.setClickable(true);
+        view1.setFocusable(true);
+        // BEGIN_INCLUDE(init_detector)
+
+
+        // First create the GestureListener that will include all our callbacks.
+
+        // Then create the GestureDetector, which takes that listener as an argument.
+
+
+
+        /* For the view where gestures will occur, create an onTouchListener that sends
+
+         * all motion events to the gesture detector.  When the gesture detector
+
+         * actually detects an event, it will use the callbacks you created in the
+
+         * SimpleOnGestureListener to alert your application.
+
+         */
+        GestureDetector.SimpleOnGestureListener gestureListener = new GestureListener(bottomSheetBehavior);
+
+        final GestureDetector gd = new GestureDetector(getActivity(), gestureListener);
+        viewPager.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                gd.onTouchEvent(motionEvent);
+
+                return false;
+
+            }
+
+        });
+
+        // END_INCLUDE(init_detector)
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -112,21 +222,12 @@ public class HomeScreen extends Fragment implements View.OnClickListener {
                     AppInfo appInfo = (AppInfo) object;
                     String app_package = (String) appInfo.packageName;
                     Context context = view.getContext();
-                    if (app_package.equals("app_drawer")) {
-                        FragmentManager fragmentManager = getFragmentManager();
-                        drawerFragment = new AppDrawerFragment();
-                        fragmentManager.beginTransaction()
-                                .add(R.id.home_screen_layout, drawerFragment)
-                                .commit();
-                        view1.setVisibility(View.GONE);
-
-                    } else {
                         Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(appInfo.packageName.toString());
                         context.startActivity(launchIntent);
-                    }
                 }
             }
         });
     }
+
 
 }
