@@ -20,6 +20,7 @@ import android.widget.GridView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -32,7 +33,6 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class HomeScreen extends Fragment {
-    AppDrawerFragment drawerFragment;
     private HomeScreenPageAdapter homeScreenPageAdapter;
     private BottomAppAdapter bottomAppAdapter;
     private ViewPager viewPager;
@@ -42,7 +42,6 @@ public class HomeScreen extends Fragment {
     private View contentView;
     private View loadingView;
     private int shortAnimationDuration;
-    private GestureListener detector;
     public HomeScreen() {
         // Required empty public constructor
     }
@@ -111,7 +110,7 @@ public class HomeScreen extends Fragment {
 //        AppInfo info = new AppInfo("App Drawer", "app_drawer", getResources().getDrawable(R.drawable.ic_apps_black_24dp));
 //        appsList.remove(2);
 //        appsList.add(2, info);
-        homeScreenPageAdapter = new HomeScreenPageAdapter(getChildFragmentManager());
+        homeScreenPageAdapter = new HomeScreenPageAdapter(getChildFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         viewPager = view.findViewById(R.id.home_screen_pager);
         viewPager.setAdapter(homeScreenPageAdapter);
         bottomAppAdapter = new BottomAppAdapter(this.getContext(), R.layout.fragment_item, appsList);
@@ -200,19 +199,14 @@ public class HomeScreen extends Fragment {
 
         final GestureDetector gd = new GestureDetector(getActivity(), gestureListener);
         viewPager.setOnTouchListener(new View.OnTouchListener() {
-
             @Override
-
             public boolean onTouch(View view, MotionEvent motionEvent) {
-
                 gd.onTouchEvent(motionEvent);
-
                 return false;
-
             }
-
         });
 
+// Sets the drag event listener for the View
         // END_INCLUDE(init_detector)
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -222,7 +216,7 @@ public class HomeScreen extends Fragment {
                     AppInfo appInfo = (AppInfo) object;
                     String app_package = (String) appInfo.packageName;
                     Context context = view.getContext();
-                        Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(appInfo.packageName.toString());
+                        Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(app_package);
                         context.startActivity(launchIntent);
                 }
             }

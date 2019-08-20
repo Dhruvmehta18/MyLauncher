@@ -37,15 +37,21 @@ public class MainActivity extends AppCompatActivity {
     private View view;
     private View mainView;
 
-    static Drawable getActivityIcon(Context context, String packageName, String activityName) {
+
+    static Drawable getActivityIcon(Context context, String packageName) {
+        PackageManager pm = context.getPackageManager();
+        Intent intent = new Intent();
+        ResolveInfo resolveInfo = pm.resolveActivity(intent, 0);
+        return resolveInfo.loadIcon(pm);
+    }
+
+    static CharSequence getAppLabel(Context context,String packageName,String activityName){
         PackageManager pm = context.getPackageManager();
         Intent intent = new Intent();
         intent.setComponent(new ComponentName(packageName, activityName));
         ResolveInfo resolveInfo = pm.resolveActivity(intent, 0);
-
-        return resolveInfo.loadIcon(pm);
+        return resolveInfo.loadLabel(pm);
     }
-
     static Drawable getBlurWallpaper() {
         return blurWallpaper;
     }

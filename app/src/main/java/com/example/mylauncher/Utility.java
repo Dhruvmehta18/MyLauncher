@@ -11,15 +11,37 @@ import android.renderscript.Type;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class Utility {
+    private static int noOfRows;
+    private static int noOfColumns;
+    static float displayDensity;
     public static int calculateNoOfColumns(Context context, float columnWidthDp) { // For example columnWidthdp=180
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        float screenWidthDp = displayMetrics.widthPixels / displayMetrics.density;
-        return (int) (screenWidthDp / columnWidthDp + 0.5);
+        displayDensity = displayMetrics.density;
+        float screenWidthDp = displayMetrics.widthPixels / displayDensity;
+        noOfColumns=(int) (screenWidthDp / columnWidthDp + 0.5);
+        return noOfColumns;
+    }
+
+    public static int cslculateNoOfRows(Context context,float rowHeight){
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float screenHeightDp = displayMetrics.heightPixels / displayDensity;
+        noOfRows=(int) (screenHeightDp / rowHeight + 0.5);
+        return noOfRows;
+    }
+
+
+    public static int getNoOfColumns() {
+        return noOfColumns;
+    }
+
+    public static int getNoOfRows() {
+        return noOfRows;
     }
 
     public static Bitmap getBitmapFromView(View view, int width, int height) {

@@ -3,6 +3,7 @@ package com.example.mylauncher;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
@@ -10,18 +11,15 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 public class HomeScreenPageAdapter extends FragmentStatePagerAdapter {
     private int maxscreens = 2;
 
-    HomeScreenPageAdapter(FragmentManager fm) {
-        super(fm);
+    HomeScreenPageAdapter(@NonNull FragmentManager fm, int behavior) {
+        super(fm, behavior);
     }
 
+
+    @NonNull
     @Override
     public Fragment getItem(int i) {
-        Fragment fragment = new DemoObjectFragment();
-        Bundle args = new Bundle();
-        // Our object is just an integer :-P
-        args.putInt(DemoObjectFragment.ARG_OBJECT, i + 1);
-        fragment.setArguments(args);
-        return fragment;
+        return new MainPageFragment();
     }
 
     @Override
